@@ -133,7 +133,7 @@ for epoch in range(st_epoch + 1, EPOCH + 1):
             writer_val.add_image('output', output_t, num_batch_val * (epoch - 1) + batch, dataformats='NCHW')
     writer_val.add_scalar('loss', np.mean(loss_arr), epoch)
     
-    if epoch % 10 == 0:
+    if epoch % 20 == 0:
         save(ckpt_dir=CKPT_DIR, net=model, optim=optimizer, epoch=epoch)
 
 writer_train.close()
