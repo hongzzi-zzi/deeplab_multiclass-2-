@@ -128,9 +128,9 @@ for epoch in range(st_epoch + 1, EPOCH + 1):
             label_t=torch.chunk(label,2, dim=1 )[-1]
             output_t=torch.chunk(label,2, dim=1 )[-1]
             
-            writer_train.add_image('input', input, num_batch_val * (epoch - 1) + batch, dataformats='NCHW')   
-            writer_train.add_image('label', label_t, num_batch_val * (epoch - 1) + batch, dataformats='NCHW')
-            writer_train.add_image('output', output_t, num_batch_val * (epoch - 1) + batch, dataformats='NCHW')
+            writer_val.add_image('input', input, num_batch_val * (epoch - 1) + batch, dataformats='NCHW')   
+            writer_val.add_image('label', label_t, num_batch_val * (epoch - 1) + batch, dataformats='NCHW')
+            writer_val.add_image('output', output_t, num_batch_val * (epoch - 1) + batch, dataformats='NCHW')
     writer_val.add_scalar('loss', np.mean(loss_arr), epoch)
     
     if epoch % 10 == 0:
