@@ -30,7 +30,7 @@ class CustomDataset(Dataset):
 
             image = Image.open(img_path).convert('RGB')
             mask = Image.open(mask_path).convert('RGB')
-            
+        
             seed=random.randint(1, 10)
             # seed 고정해주기!!!!!!!!!!!!!!
             if self.transform:
