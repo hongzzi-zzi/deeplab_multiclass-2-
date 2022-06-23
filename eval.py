@@ -22,7 +22,6 @@ torch.autograd.set_detect_anomaly(True)
 #%%
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-EPOCH=100
 BATCH_SIZE = 4
 LEARNING_RATE = 1e-3
 
@@ -34,7 +33,6 @@ RESULT_DIR = 'result'
 print("device: %s" % DEVICE)
 print("learning rate: %.4e" % LEARNING_RATE)
 print("batch size: %d" % BATCH_SIZE)
-print("number of epoch: %d" % EPOCH)
 print("data directory : %s" % DATA_DIR)
 print("train continue: %s" % TRAIN_CONTINUE)
 print("ckpt directory: %s" % CKPT_DIR)

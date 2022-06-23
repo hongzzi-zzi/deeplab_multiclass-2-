@@ -24,10 +24,11 @@ def mask2RGBmask(list, path):## 굳이 안써도 되지만,,, 2가지 이상의 
     for i in list:
         mask_ori=Image.open(i).resize((512, 512)).convert('RGBA').split()[-1]
         pix=mask_ori.load()
+        w, h=mask_ori.size
         rgb_mask=Image.new(mode="RGB", size=(512, 512),color=(0, 0, 0))
-        for x, y in itertools.product(range(512),range(512)):
-            if pix[x, y]!=0:
-                rgb_mask.load()[x, y]=(255, 255, 255)
+        for w, h in itertools.product(range(w),range(h)):
+            if pix[w, h]!=0:
+                rgb_mask.load()[w, h]=(255, 255, 255)
         rgb_mask.save(path)
 #%%
 if os.path.exists(TEST_PATH):

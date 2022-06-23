@@ -85,7 +85,6 @@ for epoch in range(st_epoch + 1, EPOCH + 1):
 
     for batch, data in enumerate(training_loader, 1):
         # forward pass
-        # [B, C, H , W]
         input=data[0].to(DEVICE)    # torch.Size([4, 3, 512, 512])
         label=data[1].to(DEVICE)    # torch.Size([4, 2, 512, 512])
         output = model(input)['out']    # torch.Size([4, 2, 512, 512])
@@ -115,10 +114,9 @@ for epoch in range(st_epoch + 1, EPOCH + 1):
 
         for batch, data in enumerate(validation_loader, 1):
             # forward pass
-            # [B, C, H , W] 
-            input=data[0].to(DEVICE)    # torch.Size([4, 3, 512, 512])
-            label=data[1].to(DEVICE)    # torch.Size([4, 2, 512, 512])
-            output = model(input)['out']    # torch.Size([4, 2, 512, 512])
+            input=data[0].to(DEVICE)
+            label=data[1].to(DEVICE)
+            output = model(input)['out']
             
             loss = loss_fn(output, label)
             loss_arr += [loss.item()]
