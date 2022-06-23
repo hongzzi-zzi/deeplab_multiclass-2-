@@ -27,7 +27,7 @@ BATCH_SIZE = 4
 LEARNING_RATE = 1e-3
 
 TRAIN_CONTINUE = 'off'
-DATA_DIR='/home/h/Desktop/data/random/test'
+DATA_DIR='/home/h/Desktop/data/random/train'
 CKPT_DIR = 'ckpt'
 LOG_DIR = 'log'
 
@@ -130,12 +130,12 @@ for epoch in range(st_epoch + 1, EPOCH + 1):
             label_t=torch.chunk(label,2, dim=1 )[-1]
             output_t=torch.chunk(label,2, dim=1 )[-1]
             
-            writer_train.add_image('input', input, num_batch_train * (epoch - 1) + batch, dataformats='NCHW')   
-            writer_train.add_image('label', label_t, num_batch_train * (epoch - 1) + batch, dataformats='NCHW')
-            writer_train.add_image('output', output_t, num_batch_train * (epoch - 1) + batch, dataformats='NCHW')
+            writer_train.add_image('input', input, num_batch_val * (epoch - 1) + batch, dataformats='NCHW')   
+            writer_train.add_image('label', label_t, num_batch_val * (epoch - 1) + batch, dataformats='NCHW')
+            writer_train.add_image('output', output_t, num_batch_val * (epoch - 1) + batch, dataformats='NCHW')
     writer_val.add_scalar('loss', np.mean(loss_arr), epoch)
     
-    if epoch % 50 == 0:
+    if epoch % 10 == 0:
         save(ckpt_dir=CKPT_DIR, net=model, optim=optimizer, epoch=epoch)
 
 writer_train.close()
