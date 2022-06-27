@@ -22,7 +22,7 @@ torch.autograd.set_detect_anomaly(True)
 
 #%% training parameter
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-EPOCH=100
+EPOCH=40
 BATCH_SIZE = 4
 LEARNING_RATE = 1e-3
 
@@ -39,7 +39,7 @@ print("data directory : %s" % DATA_DIR)
 print("train continue: %s" % TRAIN_CONTINUE)
 print("ckpt directory: %s" % CKPT_DIR)
 print("log directory: %s" % LOG_DIR)
-
+#%%
 #%% data aug & custom dataset
 transform=transforms.Compose([transforms.Resize((512, 512)),
                               transforms.RandomHorizontalFlip(), 
@@ -60,7 +60,7 @@ dataset=CustomDataset(DATA_DIR, transform=transform,transform_m= transform_label
 training_loader, validation_loader=CustomDataLoader(dataset, val_split=0.1, batch_size=BATCH_SIZE)
 #%%  network generate
 model = custom_DeepLabv3().to(DEVICE)
-loss_fn = torch.nn.BCEWithLogitsLoss().to(DEVICE)
+loss_fn = torch.nn.CrossEntropyLoss().to(DEVICE)
 optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
 #%%
 # variables

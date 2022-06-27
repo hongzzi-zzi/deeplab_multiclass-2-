@@ -16,7 +16,7 @@ from torch.utils.tensorboard import SummaryWriter
 from torchvision import datasets, transforms
 
 from dataset import *
-from model import custom_DeepLabv3
+from model import UNet
 from util import *
 torch.autograd.set_detect_anomaly(True)
 #%%
@@ -25,7 +25,6 @@ DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 BATCH_SIZE = 4
 LEARNING_RATE = 1e-3
 
-TRAIN_CONTINUE = 'off'
 DATA_DIR='/home/h/Desktop/data/random/test'
 CKPT_DIR = 'ckpt'
 RESULT_DIR = 'result'
@@ -34,7 +33,6 @@ print("device: %s" % DEVICE)
 print("learning rate: %.4e" % LEARNING_RATE)
 print("batch size: %d" % BATCH_SIZE)
 print("data directory : %s" % DATA_DIR)
-print("train continue: %s" % TRAIN_CONTINUE)
 print("ckpt directory: %s" % CKPT_DIR)
 print("log directory: %s" % RESULT_DIR)
 
@@ -63,7 +61,7 @@ test_loader = DataLoader(
     shuffle = False
 )
 #%% network generate
-model = custom_DeepLabv3().to(DEVICE)
+model = UNet().to(DEVICE)
 loss_fn = torch.nn.CrossEntropyLoss().to(DEVICE)
 optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
 # variables
@@ -84,27 +82,13 @@ with torch.no_grad(): # no backward pass
         input=data[0].to(DEVICE)
         label=data[1].to(DEVICE)
         output=net(input)['out']
-
-        print(type(output))
-        # loss function
-        loss = loss_fn(output, label)
-        loss_arr+=[loss.item()]
-        print("TEST: BATCH %04d / %04d | LOSS %.4f" %
-                      (batch, num_batch_test, np.mean(loss_arr)))
         
         for i in range(input.shape[0]):
-            inputimg=tensor2PIL(fn_denorm(input[i], mean=0.5, std=0.5)).convert('RGBA')
+            # print(output[i].shape)
+            
             outputimg=tensor2PIL(fn_class(output[i][1])).convert('RGBA')
             bg= Image.open('transparence.png').resize((512, 512)) 
-        
-            
-            bg.paste(inputimg,outputimg)
-            
             name=data[2][i].split('/')[-1].replace('m_label', 'eval').replace('jpg','png')
 
-            new_image = Image.new('RGB',(1024,512), (250,250,250))
-            new_image.paste(inputimg,(0,0))
-            new_image.paste(bg,(512,0))
-            new_image.save(os.path.join(os.path.join(RESULT_DIR), name))
-print("AVERAGE TEST: BATCH %04d / %04d | LOSS %.4f" %(batch, num_batch_test, np.mean(loss_arr)))
+            outputimg.save(os.path.join(os.path.join(RESULT_DIR), name))
 # %%
