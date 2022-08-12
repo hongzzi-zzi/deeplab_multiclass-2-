@@ -25,7 +25,8 @@ DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 BATCH_SIZE = 4
 LEARNING_RATE = 1e-3
 
-DATA_DIR='/home/h/Desktop/data/random/test'
+DATA_DIR='/home/h/Desktop/data/random/test/m_label'
+# MASK_DIR='/home/h/Desktop/data/random/test/rgb_label'
 CKPT_DIR = 'ckpt'
 RESULT_DIR = 'result'
 
@@ -52,6 +53,7 @@ transform_label = transforms.Compose([
 ])
 test_dataset = CustomDataset(
     data_dir=DATA_DIR,
+    # mask_dir=MASK_DIR,
     transform = transform,
     transform_m = transform_label
 )

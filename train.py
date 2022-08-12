@@ -22,23 +22,25 @@ torch.autograd.set_detect_anomaly(True)
 
 #%% training parameter
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-EPOCH=40
+EPOCH=100
 BATCH_SIZE = 4
 LEARNING_RATE = 1e-3
 
-TRAIN_CONTINUE = 'off'
-DATA_DIR='/home/h/Desktop/data/random/train'
+TRAIN_CONTINUE = 'on'
+DATA_DIR='/home/h/Desktop/data2/train/input'
+MASK_DIR='/home/h/Desktop/data2/train/mask'
 CKPT_DIR = 'ckpt'
-LOG_DIR = 'log'
+# LOG_DIR = 'log'
 
 print("device: %s" % DEVICE)
 print("learning rate: %.4e" % LEARNING_RATE)
 print("batch size: %d" % BATCH_SIZE)
 print("number of epoch: %d" % EPOCH)
+print("data directory : %s" % MASK_DIR)
 print("data directory : %s" % DATA_DIR)
 print("train continue: %s" % TRAIN_CONTINUE)
 print("ckpt directory: %s" % CKPT_DIR)
-print("log directory: %s" % LOG_DIR)
+# print("log directory: %s" % LOG_DIR)
 #%%
 #%% data aug & custom dataset
 transform=transforms.Compose([transforms.Resize((512, 512)),
@@ -56,7 +58,7 @@ transform_label=transforms.Compose([transforms.Resize((512, 512)),
                               transforms.RandomAffine([-60, 60]),
                               transforms.ToTensor(),
                               ])
-dataset=CustomDataset(DATA_DIR, transform=transform,transform_m= transform_label)
+dataset=CustomDataset(DATA_DIR, MASK_DIR, transform=transform,transform_m= transform_label)
 training_loader, validation_loader=CustomDataLoader(dataset, val_split=0.1, batch_size=BATCH_SIZE)
 #%%  network generate
 model = custom_DeepLabv3().to(DEVICE)
@@ -69,9 +71,9 @@ num_data_val = len(validation_loader)
 num_batch_train = np.ceil(num_data_train / BATCH_SIZE)
 num_batch_val = np.ceil(num_data_val / BATCH_SIZE)
 
-# set summarywriter to use tensorboard
-writer_train = SummaryWriter(log_dir=os.path.join(LOG_DIR, 'train'))
-writer_val = SummaryWriter(log_dir=os.path.join(LOG_DIR, 'val'))
+# # set summarywriter to use tensorboard
+# writer_train = SummaryWriter(log_dir=os.path.join(LOG_DIR, 'train'))
+# writer_val = SummaryWriter(log_dir=os.path.join(LOG_DIR, 'val'))
 
 #%%
 st_epoch=0
@@ -102,11 +104,11 @@ for epoch in range(st_epoch + 1, EPOCH + 1):
         label_t=torch.chunk(label,2, dim=1 )[-1]
         output_t=torch.chunk(label,2, dim=1 )[-1]
         
-        writer_train.add_image('input', input, num_batch_train * (epoch - 1) + batch, dataformats='NCHW')   
-        writer_train.add_image('label', label_t, num_batch_train * (epoch - 1) + batch, dataformats='NCHW')
-        writer_train.add_image('output', output_t, num_batch_train * (epoch - 1) + batch, dataformats='NCHW')
+    #     writer_train.add_image('input', input, num_batch_train * (epoch - 1) + batch, dataformats='NCHW')   
+    #     writer_train.add_image('label', label_t, num_batch_train * (epoch - 1) + batch, dataformats='NCHW')
+    #     writer_train.add_image('output', output_t, num_batch_train * (epoch - 1) + batch, dataformats='NCHW')
 
-    writer_train.add_scalar('loss', np.mean(loss_arr), epoch)
+    # writer_train.add_scalar('loss', np.mean(loss_arr), epoch)
         
     with torch.no_grad():
         model.eval()
@@ -128,14 +130,14 @@ for epoch in range(st_epoch + 1, EPOCH + 1):
             label_t=torch.chunk(label,2, dim=1 )[-1]
             output_t=torch.chunk(label,2, dim=1 )[-1]
             
-            writer_val.add_image('input', input, num_batch_val * (epoch - 1) + batch, dataformats='NCHW')   
-            writer_val.add_image('label', label_t, num_batch_val * (epoch - 1) + batch, dataformats='NCHW')
-            writer_val.add_image('output', output_t, num_batch_val * (epoch - 1) + batch, dataformats='NCHW')
-    writer_val.add_scalar('loss', np.mean(loss_arr), epoch)
+    #         writer_val.add_image('input', input, num_batch_val * (epoch - 1) + batch, dataformats='NCHW')   
+    #         writer_val.add_image('label', label_t, num_batch_val * (epoch - 1) + batch, dataformats='NCHW')
+    #         writer_val.add_image('output', output_t, num_batch_val * (epoch - 1) + batch, dataformats='NCHW')
+    # writer_val.add_scalar('loss', np.mean(loss_arr), epoch)
     
-    if epoch % 20 == 0:
+    if epoch % 25 == 0:
         save(ckpt_dir=CKPT_DIR, net=model, optim=optimizer, epoch=epoch)
 
-writer_train.close()
-writer_val.close()
+# writer_train.close()
+# writer_val.close()
 #%%

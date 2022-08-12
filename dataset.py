@@ -13,9 +13,14 @@ from mapping import *
 
 #%%
 class CustomDataset(Dataset):
-    def __init__(self, data_dir, transform=None, transform_m=None):
-        self.img_dir = os.path.join(data_dir, 'm_label')
-        self.mask_dir=os.path.join(data_dir, 'rgb_label')
+    # def __init__(self, data_dir, transform=None, transform_m=None):
+    #     self.img_dir = os.path.join(data_dir, 'm_label')
+    #     self.mask_dir=os.path.join(data_dir, 'rgb_label')
+    #     self.transform = transform
+    #     self.transform_m = transform_m
+    def __init__(self, data_dir, mask_dir=None, transform=None, transform_m=None):
+        self.img_dir = data_dir
+        self.mask_dir=mask_dir
         self.transform = transform
         self.transform_m = transform_m
 
@@ -29,7 +34,8 @@ class CustomDataset(Dataset):
             mask_path=os.path.join(self.mask_dir,sorted(os.listdir(self.mask_dir))[idx])
 
             image = Image.open(img_path).convert('RGB')
-            mask = Image.open(mask_path).convert('RGB')
+            # mask = Image.open(mask_path).convert('RGB')
+            mask = Image.open(mask_path).convert('L')
         
             seed=random.randint(1, 10)
             # seed 고정해주기!!!!!!!!!!!!!!
